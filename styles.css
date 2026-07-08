@@ -1,0 +1,1110 @@
+/* ==========================================================================
+   CSS Design System - Spinning Cassette Player
+   ========================================================================== */
+
+:root {
+  /* Color Palette (HSL Tailored Colors) */
+  --bg-color: hsl(224, 25%, 6%);
+  --panel-bg: hsla(224, 20%, 12%, 0.65);
+  --panel-border: hsla(224, 20%, 80%, 0.08);
+  --text-primary: hsl(0, 0%, 100%);
+  --text-secondary: hsl(224, 14%, 65%);
+  --text-muted: hsl(224, 10%, 40%);
+  
+  --accent-primary: hsl(174, 100%, 45%);      /* Neon Mint/Cyan */
+  --accent-secondary: hsl(276, 90%, 60%);    /* Purple Glow */
+  --accent-glow: hsla(174, 100%, 45%, 0.3);
+  
+  /* Cassette Aesthetics */
+  --cassette-bg: hsl(224, 15%, 15%);
+  --cassette-border: hsl(224, 12%, 8%);
+  --cassette-label-bg: hsl(0, 0%, 93%);
+  --cassette-accent-1: hsl(342, 85%, 55%);    /* Retro Magenta */
+  --cassette-accent-2: hsl(38, 95%, 50%);     /* Retro Gold */
+  
+  /* Dynamic Properties controlled by JS */
+  --rotate-speed: 0s;
+  --left-tape-radius: 48px;
+  --right-tape-radius: 24px;
+  
+  /* Layout Constants */
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 8px;
+  --shadow-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 16px 0 var(--accent-glow);
+  --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset & Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Background Ambient Lighting */
+.app-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+}
+
+.ambient-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--accent-primary);
+  top: -10%;
+  left: -10%;
+  animation: pulse-ambient 12s infinite alternate;
+}
+
+.ambient-2 {
+  width: 600px;
+  height: 600px;
+  background: var(--accent-secondary);
+  bottom: -15%;
+  right: -10%;
+  animation: pulse-ambient 15s infinite alternate-reverse;
+}
+
+@keyframes pulse-ambient {
+  0% { transform: scale(1) translate(0, 0); opacity: 0.12; }
+  100% { transform: scale(1.2) translate(50px, 30px); opacity: 0.2; }
+}
+
+/* Main Container Layout */
+.app-container {
+  width: 90%;
+  max-width: 1100px;
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 32px;
+  padding: 24px;
+  z-index: 10;
+}
+
+@media (max-width: 868px) {
+  .app-container {
+    grid-template-columns: 1fr;
+    max-width: 550px;
+    padding: 16px;
+    gap: 24px;
+  }
+}
+
+/* Left Section: Player & Cassette */
+.player-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.player-header {
+  text-align: left;
+}
+
+.player-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-primary);
+  background: rgba(174, 100, 45, 0.1);
+  padding: 6px 12px;
+  border-radius: 50px;
+  border: 1px solid hsla(174, 100%, 45%, 0.2);
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.song-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, var(--text-primary) 50%, var(--text-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.song-artist {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  margin-top: 4px;
+}
+
+/* Cassette Visualizer Block */
+.cassette-deck-wrapper {
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cassette-tape {
+  width: 100%;
+  max-width: 440px;
+  aspect-ratio: 1.65 / 1;
+  background: var(--cassette-bg);
+  border-radius: 14px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255,255,255,0.1);
+  border: 3px solid var(--cassette-border);
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+/* Screws in corner of cassette */
+.screw {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: hsl(0, 0%, 30%);
+  border-radius: 50%;
+  box-shadow: inset 1px 1px 1px rgba(0,0,0,0.5);
+}
+.screw::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 1px;
+  background: hsl(0, 0%, 15%);
+  top: 3.5px;
+  left: 1px;
+  transform: rotate(45deg);
+}
+.top-left { top: 8px; left: 8px; }
+.top-right { top: 8px; right: 8px; }
+.bottom-left { bottom: 8px; left: 8px; }
+.bottom-right { bottom: 8px; right: 8px; }
+
+/* Cassette Label Design */
+.cassette-label {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+  bottom: 34px;
+  background: var(--cassette-label-bg);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top: 5px solid var(--cassette-accent-1);
+  border-bottom: 5px solid var(--cassette-accent-2);
+  color: #111;
+  overflow: hidden;
+}
+
+.label-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  border-bottom: 1.5px solid #222;
+  padding-bottom: 4px;
+}
+
+.brand {
+  letter-spacing: 0.05em;
+}
+
+.side-indicator {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.label-tracks {
+  margin: 6px 0;
+  border-left: 3px solid var(--cassette-accent-1);
+  padding-left: 8px;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.track-title-label {
+  font-size: 0.95rem;
+  font-weight: 800;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.track-artist-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #555;
+}
+
+/* Cassette Transparent Window Area */
+.label-window-area {
+  background: #111;
+  border-radius: 6px;
+  height: 48px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.8);
+  border: 1px solid #444;
+  margin: 4px 10%;
+}
+
+.window-inner {
+  width: 90%;
+  height: 80%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Spindle (Roda Putar Gigi Tengah) */
+.tape-spindle {
+  width: 28px;
+  height: 28px;
+  background: #eee;
+  border-radius: 50%;
+  border: 2px solid #555;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+.spindle-teeth {
+  width: 16px;
+  height: 16px;
+  background: #222;
+  border-radius: 50%;
+  position: relative;
+  animation: spin var(--rotate-speed) linear infinite;
+}
+
+/* Creating the gears on spindle */
+.spindle-teeth::before,
+.spindle-teeth::after {
+  content: '';
+  position: absolute;
+  background: #eee;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.spindle-teeth::before {
+  width: 4px;
+  height: 20px;
+  box-shadow: 0 0 0 1px #eee;
+}
+
+.spindle-teeth::after {
+  width: 20px;
+  height: 4px;
+  box-shadow: 0 0 0 1px #eee;
+}
+
+/* Tape Rolls (Pita Hitam Yang Menggulung) */
+.tape-roll {
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, transparent 14px, #261f1c 15px, #1a1513 100%);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 5px rgba(0,0,0,0.8);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.left-roll {
+  left: 12px;
+  width: var(--left-tape-radius);
+  height: var(--left-tape-radius);
+}
+
+.right-roll {
+  right: 12px;
+  width: var(--right-tape-radius);
+  height: var(--right-tape-radius);
+}
+
+/* Tape Ribbon Bridge */
+.tape-ribbon-bridge {
+  position: absolute;
+  height: 1.5px;
+  background: #1a1513;
+  left: 20px;
+  right: 20px;
+  bottom: 6px;
+  z-index: 1;
+}
+
+/* Timing numbers/ticks below the window */
+.window-ticks {
+  position: absolute;
+  bottom: -15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 7px;
+  color: #777;
+  pointer-events: none;
+}
+
+.label-footer {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem;
+  font-weight: 700;
+  border-top: 1px dashed #777;
+  padding-top: 4px;
+  margin-top: 2px;
+}
+
+/* Trapezoid bottom plate of cassette */
+.cassette-bottom-plate {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 28px;
+  background: hsl(224, 10%, 10%);
+  clip-path: polygon(7% 0%, 93% 0%, 88% 100%, 12% 100%);
+  border-top: 1px solid #333;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.plate-hole {
+  width: 8px;
+  height: 8px;
+  background: #000;
+  border-radius: 50%;
+  border: 1px solid #333;
+}
+
+.center-left-hole,
+.center-right-hole {
+  width: 6px;
+  height: 6px;
+}
+
+/* Reel Rotation Keyframes */
+@keyframes spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Controls Dashboard Card */
+.controls-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-glow);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Timeline/Slider styles */
+.timeline-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.time-display {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  min-width: 42px;
+}
+
+.slider-wrapper {
+  flex-grow: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.custom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+  transition: transform 0.1s ease;
+  border: none;
+}
+
+.custom-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+.custom-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+  transition: transform 0.1s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.custom-slider::-moz-range-thumb:hover {
+  transform: scale(1.3);
+}
+
+.slider-progress {
+  position: absolute;
+  left: 0;
+  height: 6px;
+  border-radius: 10px 0 0 10px;
+  background: linear-gradient(to right, var(--accent-secondary), var(--accent-primary));
+  pointer-events: none;
+  width: 0%;
+  z-index: 1;
+}
+
+/* Dashboard Action Bar */
+.buttons-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Buttons Base & Interactive States */
+.control-btn {
+  background: hsla(224, 15%, 22%, 0.4);
+  border: 1px solid hsla(224, 15%, 80%, 0.1);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-smooth);
+  outline: none;
+}
+
+.control-btn:focus-visible {
+  outline: 2px solid var(--accent-primary);
+}
+
+.control-btn:hover {
+  background: hsla(174, 100%, 45%, 0.15);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Secondary Button Style (Mode Switcher) */
+.secondary-btn {
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-height: 40px;
+}
+
+.secondary-btn .btn-text {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-primary);
+}
+
+/* Playback Control Center */
+.playback-center {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.round-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.main-play-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: none;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.main-play-btn:hover {
+  background: var(--accent-primary);
+  color: var(--bg-color);
+  transform: scale(1.08);
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+
+/* Volume Control block */
+.volume-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+
+.volume-slider {
+  -webkit-appearance: none;
+  width: 70px;
+  height: 4px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  cursor: pointer;
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  border: none;
+  cursor: pointer;
+}
+
+/* Custom File Uploader styling */
+.uploader-container {
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.file-input-hidden {
+  display: none;
+}
+
+.upload-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.upload-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.file-name-info {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/* Right Section: Lyrics Display Card */
+.lyrics-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.lyrics-card {
+  flex-grow: 1;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-glow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  height: 100%;
+}
+
+.lyrics-title-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-bottom: 12px;
+}
+
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  transition: var(--transition-smooth);
+}
+
+.pulse-indicator.active {
+  background: var(--accent-primary);
+  box-shadow: 0 0 10px var(--accent-primary);
+  animation: pulse-dot 1.5s infinite alternate;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+.lyrics-title-bar h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Scroll Container for lyrics with gradient masks */
+.lyrics-scroll-box {
+  flex-grow: 1;
+  height: 380px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  position: relative;
+  scrollbar-width: none; /* Hide scrollbar for Firefox */
+  
+  /* Premium linear fade out at top and bottom */
+  mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, white 20%, white 80%, transparent);
+}
+
+.lyrics-scroll-box::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome/Safari */
+}
+
+.lyrics-inner {
+  padding: 160px 0; /* Ensures the first and last lines can be centered */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Individual Lyric Line Styling */
+.lyric-line {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  text-align: center;
+  color: var(--text-secondary);
+  opacity: 0.4;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+  width: 100%;
+}
+
+.lyric-line:hover {
+  opacity: 0.8;
+  color: var(--text-primary);
+}
+
+.lyric-line.active {
+  opacity: 1;
+  color: var(--text-primary);
+  font-weight: 600;
+  transform: scale(1.08);
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4), 0 0 8px var(--accent-primary);
+}
+
+.lyrics-footer {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: rgba(10, 15, 25, 0.85);
+  border: 1px solid var(--accent-primary);
+  backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+  pointer-events: none;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Sync Adjuster Controls */
+.sync-adjuster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  margin-left: auto;
+}
+
+.sync-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+}
+
+.sync-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-primary);
+}
+
+.sync-offset-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--accent-primary);
+  min-width: 75px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Accessibility: Screen Reader Only helper */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Sources Container Layout */
+.sources-container {
+  border-top: 1px dashed rgba(255, 255, 255, 0.08);
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.yt-input-group {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  background: hsla(224, 15%, 20%, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
+
+.yt-input-group:focus-within {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+.yt-input {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  outline: none;
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.yt-input::placeholder {
+  color: var(--text-muted);
+}
+
+.yt-load-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.yt-load-btn:hover {
+  background: var(--accent-primary);
+  color: var(--bg-color);
+}
+
+.yt-load-btn .icon {
+  width: 12px;
+  height: 12px;
+}
+
+.divider-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.uploader-group {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 580px) {
+  .sources-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .divider-text {
+    text-align: center;
+    padding: 4px 0;
+  }
+}
+
+/* Mobile Friendly Optimization (Screens under 500px) */
+@media (max-width: 500px) {
+  body {
+    padding: 10px 0;
+  }
+  
+  .app-container {
+    width: 100%;
+    padding: 12px;
+    gap: 16px;
+  }
+
+  .song-title {
+    font-size: 1.6rem;
+  }
+
+  .song-artist {
+    font-size: 0.95rem;
+  }
+
+  /* Make the cassette a bit more compact with less internal padding */
+  .cassette-tape {
+    border-width: 2px;
+    border-radius: 10px;
+  }
+  
+  .cassette-label {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 24px;
+    padding: 6px;
+    border-top-width: 3px;
+    border-bottom-width: 3px;
+  }
+
+  .label-window-area {
+    height: 38px;
+    margin: 4px 6%;
+  }
+
+  .tape-roll {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .tape-spindle {
+    width: 22px;
+    height: 22px;
+  }
+
+  .spindle-teeth {
+    width: 12px;
+    height: 12px;
+  }
+
+  .cassette-bottom-plate {
+    height: 20px;
+    padding: 0 12px;
+  }
+
+  .plate-hole {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Compact controls dashboard card */
+  .controls-card {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .buttons-bar {
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .secondary-btn {
+    width: 100%; /* Make YT/Synth switcher full-width on tiny screens for better tapping */
+    min-height: 44px;
+  }
+
+  .volume-container {
+    width: 100%;
+    justify-content: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 12px;
+  }
+  
+  .volume-slider {
+    flex-grow: 1;
+    max-width: 150px;
+  }
+
+  /* Make lyrics section tighter */
+  .lyrics-card {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .lyrics-scroll-box {
+    height: 260px; /* Shorter scroll area so the layout isn't overly tall */
+  }
+
+  .lyrics-inner {
+    padding: 110px 0; /* Align first and last lines on shorter screen */
+    gap: 12px;
+  }
+
+  .lyric-line {
+    font-size: 0.95rem;
+    padding: 6px 12px;
+  }
+  
+  .lyric-line.active {
+    transform: scale(1.05);
+  }
+}

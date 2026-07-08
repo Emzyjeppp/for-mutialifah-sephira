@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Nikmati lirik lagu 'Andai Aku Bisa' oleh Tulus dengan pemutar kaset pita retro-modern interaktif yang berputar secara dinamis. Unggah audio Anda sendiri atau dengarkan demo sintesis piano kami.">
+  <meta name="keywords" content="Andai Aku Bisa, Tulus, Lirik Lagu, Kaset Berputar, Retro Web Player, Chrisye, Musik Indonesia, Web Audio API">
+  <meta name="author" content="Antigravity Coding Assistant">
+  <title>Andai Aku Bisa - Tulus | Kaset Pita Interaktif & Lirik</title>
+  
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-background">
+    <div class="ambient-glow ambient-1"></div>
+    <div class="ambient-glow ambient-2"></div>
+  </div>
+
+  <main class="app-container">
+    <!-- Left Section: Cassette Player & Controls -->
+    <section class="player-section">
+      <header class="player-header">
+        <span class="player-badge">PREMIUM PLAYER</span>
+        <h1 class="song-title">Andai Aku Bisa</h1>
+        <p class="song-artist">Tulus</p>
+      </header>
+
+      <!-- CSS-Based Interactive Cassette Tape -->
+      <div class="cassette-deck-wrapper" id="cassetteWrapper">
+        <div class="cassette-tape">
+          <!-- Cassette Outer Case -->
+          <div class="cassette-body">
+            <!-- Cassette Screws -->
+            <div class="screw top-left"></div>
+            <div class="screw top-right"></div>
+            <div class="screw bottom-left"></div>
+            <div class="screw bottom-right"></div>
+
+            <!-- Cassette Label Design -->
+            <div class="cassette-label">
+              <div class="label-header">
+                <span class="brand">SPESIAL UNTUK SEPHIRA 💝</span>
+                <span class="side-indicator">A</span>
+              </div>
+              <div class="label-tracks">
+                <div class="track-info">
+                  <div class="track-title-label" id="labelTitle">Andai Aku Bisa</div>
+                  <div class="track-artist-label" id="labelArtist">Tulus (Tribute)</div>
+                </div>
+              </div>
+              
+              <!-- Cassette Transparent Window Area -->
+              <div class="label-window-area">
+                <div class="window-inner">
+                  <!-- Left Tape Roll -->
+                  <div class="tape-roll left-roll" id="leftRoll">
+                    <div class="tape-spindle">
+                      <div class="spindle-teeth"></div>
+                    </div>
+                  </div>
+                  <!-- Right Tape Roll -->
+                  <div class="tape-roll right-roll" id="rightRoll">
+                    <div class="tape-spindle">
+                      <div class="spindle-teeth"></div>
+                    </div>
+                  </div>
+                  <!-- Tape ribbon layer between rolls -->
+                  <div class="tape-ribbon-bridge" id="tapeRibbon"></div>
+                </div>
+                <!-- Timing ticks underneath -->
+                <div class="window-ticks">
+                  <span>100</span><span>50</span><span>0</span>
+                </div>
+              </div>
+              
+              <div class="label-footer">
+                <span>IEC I / TYPE I</span>
+                <span>MADE WITH LOVE FOR SEPHIRA</span>
+              </div>
+            </div>
+            
+            <!-- Trapezoid bottom part of cassette -->
+            <div class="cassette-bottom-plate">
+              <div class="plate-hole left-hole"></div>
+              <div class="plate-hole center-left-hole"></div>
+              <div class="plate-hole center-right-hole"></div>
+              <div class="plate-hole right-hole"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls Dashboard -->
+      <div class="controls-card">
+        <!-- Timeline Slider -->
+        <div class="timeline-container">
+          <span class="time-display" id="currentTime">00:00</span>
+          <div class="slider-wrapper">
+            <label for="progressBar" class="sr-only">Timeline Progress</label>
+            <input type="range" id="progressBar" min="0" max="100" value="0" step="0.1" class="custom-slider">
+            <div class="slider-progress" id="sliderProgress"></div>
+          </div>
+          <span class="time-display" id="totalDuration">03:58</span>
+        </div>
+
+        <!-- Main Buttons Bar -->
+        <div class="buttons-bar">
+          <!-- Audio Source Mode Switcher -->
+          <button class="control-btn secondary-btn" id="modeBtn" title="Ganti Mode Audio: Demo Synth / Berkas Kustom" aria-label="Ganti Mode Audio">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            <span class="btn-text" id="modeStatus">Demo Synth</span>
+          </button>
+
+          <!-- Playback Controls -->
+          <div class="playback-center">
+            <button class="control-btn round-btn" id="prevBtn" title="Rewind 10s" aria-label="Rewind 10s">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 19 2 12 11 5 11 19"></polygon>
+                <polygon points="22 19 13 12 22 5 22 19"></polygon>
+              </svg>
+            </button>
+            <button class="control-btn main-play-btn" id="playBtn" title="Play / Pause" aria-label="Play / Pause">
+              <!-- Play Icon -->
+              <svg class="icon play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <!-- Pause Icon -->
+              <svg class="icon pause-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+            </button>
+            <button class="control-btn round-btn" id="nextBtn" title="Forward 10s" aria-label="Forward 10s">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="13 19 22 12 13 5 13 19"></polygon>
+                <polygon points="2 19 11 12 2 5 2 19"></polygon>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Volume Controls -->
+          <div class="volume-container">
+            <button class="control-btn icon-btn" id="muteBtn" title="Mute/Unmute" aria-label="Mute/Unmute">
+              <svg class="icon" id="volumeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+            </button>
+            <label for="volumeSlider" class="sr-only">Volume</label>
+            <input type="range" id="volumeSlider" min="0" max="100" value="80" class="volume-slider">
+          </div>
+        </div>
+
+        <!-- Inputs and Sources Dashboard Row -->
+        <div class="sources-container">
+          <!-- YouTube URL Input -->
+          <div class="yt-input-group">
+            <label for="ytUrlInput" class="sr-only">Link YouTube</label>
+            <input type="text" id="ytUrlInput" placeholder="Tempel link YouTube..." class="yt-input" value="https://www.youtube.com/watch?v=ew3lh7_DAeU">
+            <button id="ytLoadBtn" class="yt-load-btn" title="Muat audio YouTube">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span>Muat YT</span>
+            </button>
+          </div>
+          
+          <div class="divider-text">atau</div>
+
+          <!-- Custom File Uploader -->
+          <div class="uploader-group">
+            <input type="file" id="audioUpload" accept="audio/*" class="file-input-hidden">
+            <label for="audioUpload" class="upload-btn">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+              </svg>
+              <span>Unggah MP3</span>
+            </label>
+          </div>
+        </div>
+        <div class="file-name-info" id="fileNameInfo">Mendeteksi audio YouTube...</div>
+      </div>
+    </section>
+
+    <!-- Right Section: Synchronized Lyrics Screen -->
+    <section class="lyrics-section">
+      <div class="lyrics-card">
+        <div class="lyrics-title-bar">
+          <div class="pulse-indicator" id="pulseIndicator"></div>
+          <h2>Lirik Tersinkronisasi</h2>
+          <div class="sync-adjuster">
+            <button id="syncPrev" class="sync-btn" title="Lirik lebih cepat (-0.5s)">-0.5s</button>
+            <span id="syncOffsetVal" class="sync-offset-text">Sync: 0.0s</span>
+            <button id="syncNext" class="sync-btn" title="Lirik lebih lambat (+0.5s)">+0.5s</button>
+          </div>
+        </div>
+        
+        <!-- Scrolling Lyrics Container -->
+        <div class="lyrics-scroll-box" id="lyricsScrollBox">
+          <div class="lyrics-inner" id="lyricsInner">
+            <!-- Lyrics lines will be populated dynamically by JavaScript -->
+            <div class="lyrics-loader">Memuat lirik lagu...</div>
+          </div>
+        </div>
+        
+        <div class="lyrics-footer">
+          <p>💡 Tip: Ketuk baris lirik mana saja untuk langsung melompat ke bagian lagu tersebut.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Notification Toast -->
+  <div class="toast" id="toast">Notifikasi</div>
+
+  <!-- Hidden YouTube Player Container (1x1px to allow playing in mobile background) -->
+  <div id="ytPlayerContainer" style="position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; overflow: hidden; bottom: 0; right: 0;"></div>
+
+  <!-- Main scripts -->
+  <script src="lyrics.js"></script>
+  <script src="audio.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
