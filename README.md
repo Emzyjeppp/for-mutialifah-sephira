@@ -2,7 +2,7 @@
 
 Sebuah pemutar musik web bertema kaset retro-modern dengan lirik tersinkronisasi untuk lagu **"Andai Aku Bisa"** (versi cover oleh **Tulus**). 
 
-Aplikasi ini dipersembahkan spesial dengan penuh kasih sayang untuk **Mutialifah Sephira** 💝✨.
+Aplikasi ini dipersembahkan spesial dengan penuh kasih sayang untuk **Mutia** 💝✨.
 
 ---
 
@@ -43,4 +43,4 @@ Proyek ini sepenuhnya statis (HTML/CSS/JS) sehingga sangat mudah di-host secara 
 
 ---
 
-*Made with 💖 for Mutialifah Sephira.*
+*Made with 💖 for Mutia.*
